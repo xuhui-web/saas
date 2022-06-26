@@ -6,6 +6,8 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
+
+
 const name = defaultSettings.title || 'vue Admin Template' // page title
 
 // If your port is set to 80,
@@ -17,6 +19,7 @@ const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
+ 
   /**
    * You will need to set publicPath if you plan to deploy your site under a sub path,
    * for example GitHub Pages. If you plan to deploy your site to https://foo.github.io/bar/,
@@ -29,6 +32,7 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+   lintOnSave: false,
   devServer: {
     port: port,
     open: true,
@@ -36,6 +40,18 @@ module.exports = {
       warnings: false,
       errors: true
     },
+     proxy: {
+        // 这里的api 表示如果我们的请求地址有/api的时候,就出触发代理机制
+        // localhost:8888/api/abc  => 代理给另一个服务器
+        // 本地的前端  =》 本地的后端  =》 代理我们向另一个服务器发请求 （行得通）
+        // 本地的前端  =》 另外一个服务器发请求 （跨域 行不通）
+        // 当我们的本地的请求 有/api的时候，就会代理我们的请求地址向另外一个服务器发出请求
+      '/api': {
+        target: 'http://ihrm-java.itheima.net/', // 跨域请求的地址
+        changeOrigin: true // 只有这个值为true的情况下 才表示开启跨域
+      }
+      
+    }
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
