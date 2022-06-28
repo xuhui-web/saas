@@ -11,20 +11,20 @@ router.beforeEach( async function(to, from, next) {
   //  首先判断有无token
   if (store.getters.token) {
     //   如果有token 继续判断是不是去登录页
-    if (to.path === '/login') {
-   
-      next('/') // 跳到主页
-      
-    } else {
-      if (!store.getters.userId) {
-        // 如果没有id这个值 才会调用 vuex的获取资料的action
-        await store.dispatch('user/getUserInfo')
-        // 为什么要写await 因为我们想获取完资料再去放行
-         next() // 直接放行
-      }
-     
-      
-    }
+            if (to.path === '/login') {
+          
+              next('/') // 跳到主页
+              
+            } else  if (!store.getters.userId){
+                // 如果没有id这个值 才会调用 vuex的获取资料的action
+                await store.dispatch('user/getUserInfo')
+                // 为什么要写await 因为我们想获取完资料再去放行
+                next() // 直接放行
+              
+              
+            }else{
+               next() // 直接放行
+            }
   } else {
     // 如果没有token
     if (whiteList.indexOf(to.path) > -1) {
