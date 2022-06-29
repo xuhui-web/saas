@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { delDepartments } from "@/api/departments"
 // 该组件需要对外开放属性 外部需要提供一个对象 对象里需要有name  manager
 export default {
     // props可以用数组来接收数据 也可以用对象来接收
