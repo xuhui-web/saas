@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard-container">
+    <div v-loading="loading" class="dashboard-container">
         <div class="app-container">
             <el-card class="tree-card">
                 <!-- 用了一个行列布局 -->
@@ -13,14 +13,15 @@
                     <tree-tools
                         slot-scope="{ data }"
                         :tree-node="data"
-                        @delDepts="getDepartments"
                         @addDepts="addDepts"
+                        @editDepts="editDepts"
+                        @delDepts="getDepartments"
                     />
                 </el-tree>
             </el-card>
 
             <!-- 放置新增弹层组件  -->
-            <add-dept :showDialog.sync="showDialog" :tree-node="node" @addDepts="getDepartments" />
+            <add-dept ref="addDept" :showDialog.sync="showDialog" :tree-node="node" @addDepts="getDepartments" />
         </div>
     </div>
 </template>
@@ -43,6 +44,8 @@ export default {
                 label: "name", // 表示 从这个属性显示内容
             },
             showDialog: false, // 显示窗体
+            node: null, // 记录当前点击的node节点
+            loading: false, // 当前的控制显示弹层
         }
     },
     created() {
@@ -50,15 +53,25 @@ export default {
     },
     methods: {
         async getDepartments() {
+            this.loading = true
             const result = await getDepartments()
             this.company = { name: result.companyName, manager: "负责人", id: "" } // 这里定义一个空串  因为 它是根 所有的子节点的数据pid 都是 ""
             this.departs = tranListToTreeData(result.depts, "")
-            console.log(result)
+            this.loading = false
         },
+
         addDepts(node) {
             this.showDialog = true // 显示弹层
             // 因为node是当前的点击的部门， 此时这个部门应该记录下来,
             this.node = node
+        },
+        // 点击编辑触发的父组件的方法
+        editDepts(node) {
+            this.showDialog = true // 显示新增组件弹层
+            this.node = node // 存储传递过来的node数据
+            // 我们需要在这个位置 调用子组件的方法
+            // 父组件 调用子组件的方法
+            this.$refs.addDept.getDepartDetail(node.id) // 直接调用子组件中的方法 传入一个id
         },
     },
 }
