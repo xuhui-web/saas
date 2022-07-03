@@ -18,7 +18,9 @@
                             <el-table-column align="center" prop="description" label="描述" />
                             <el-table-column align="center" label="操作">
                                 <template slot-scope="{ row }">
-                                    <el-button size="small" type="success">分配权限</el-button>
+                                    <el-button size="small" type="success" @click="assignPerm(row.id)"
+                                        >分配权限</el-button
+                                    >
                                     <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                                     <el-button size="small" type="danger" @click="deleteRole(row.id)">删除</el-button>
                                 </template>
@@ -94,6 +96,7 @@ import { mapGetters } from "vuex"
 import { getRoleList, getCompanyInfo, deleteRole, updateRole, getRoleDetail, addRole } from "@/api/setting"
 
 export default {
+    components: { AssignRole },
     data() {
         return {
             list: [], // 承接数组
@@ -146,8 +149,8 @@ export default {
         },
 
         async editRole(id) {
-            this.roleForm = await getRoleDetail(id)
-            this.showDialog = true // 为了不出现闪烁的问题 先获取数据 再弹出层
+            this.roleForm = await getRoleDetail(id) // 实现数据回写
+            this.showDialog = true // 显示弹层
         },
         async btnOK() {
             try {
